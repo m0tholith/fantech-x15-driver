@@ -1,0 +1,25 @@
+LED Type depends on Packet 9 4th byte value.
+
+
+Off:
+    07 13 7f 87 00 00 00 00
+Static:
+    07 13 7f 86 00 00 00 00
+Fixed:
+    07 13 7f 86 00 00 00 00
+    - 4th byte is 0x86 minus the time specified, e.x.:
+        - 1s: 07 13 7f 85 00 00 00 00
+        - 2s: 07 13 7f 84 00 00 00 00
+        - 3s: 07 13 7f 83 00 00 00 00
+        - ...
+                       /\
+                       ||
+Cyclic:
+    07 13 7f 96 00 00 00 00
+    - 4th byte is 0x86 minus the time specified, e.x.:
+        - 1s: 07 13 7f 95 00 00 00 00
+        - 2s: 07 13 7f 94 00 00 00 00
+        - 3s: 07 13 7f 93 00 00 00 00
+        - ...
+                       /\
+                       ||

@@ -3,8 +3,9 @@
 }:
 pkgs.mkShell {
   buildInputs = with pkgs; [
-    gcc
+    python3
     usbutils
+    python3Packages.pyusb
     libusb1
   ];
 }

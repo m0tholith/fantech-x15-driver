@@ -1,0 +1,62 @@
+Packets 10, 12, 14, ..., 20 are affected, describing settings for each mode.
+    - Byte 3 is affected by the default mode. 0x40 + index of default mode (0x40, 0x41, ...). This is supplied in every call, regardless of whether or not the mode being modified is the default.
+        Mode 1: 07 09 40 18 3f 00 00 00
+                07 09 40 19 3f 00 00 00
+                07 09 40 1a 3f 00 00 00
+                07 09 40 1b 3f 00 00 00
+                07 09 40 1c 3f 00 00 00
+                07 09 40 1d 3f 00 00 00
+                      /\
+                      ||
+
+        Mode 2: 07 09 41 18 3f 00 00 00
+                07 09 41 19 3f 00 00 00
+                07 09 41 1a 3f 00 00 00
+                07 09 41 1b 3f 00 00 00
+                07 09 41 1c 3f 00 00 00
+                07 09 41 1d 3f 00 00 00
+                      /\
+                      ||
+        ...
+
+    - Byte 4 is affected by the DPI of each mode.
+        Mode 1: 07 09 40 18 3f 00 00 00         0001 1000 (First DPI option, for the first mode.)
+                07 09 40 29 3f 00 00 00         0010 1001 (Second DPI option, for the second mode.)
+                07 09 40 3a 3f 00 00 00         0011 1010 (Third DPI option, for the third mode.)
+                07 09 40 4b 3f 00 00 00         0100 1011 (Fourth DPI option, for the fourth mode.)
+                07 09 40 5c 3f 00 00 00         0101 1100 (Fifth DPI option, for the fifth mode.)
+                07 09 40 6d 3f 00 00 00         0110 1101 (Sixth DPI option, for the sixth mode.)
+                         /\
+                         ||
+
+        Mode 2: 07 09 41 58 3f 00 00 00         0101 1000 (Fifth DPI option, for the first mode.)
+                07 09 41 a9 3f 00 00 00         1010 1001 (Tenth DPI option, for the second mode.)
+                07 09 41 1a 3f 00 00 00         0001 1010 (First DPI option, for the third mode.)
+                07 09 41 7b 3f 00 00 00         0111 1011 (Seventh DPI option, for the fourth mode.)
+                07 09 41 bc 3f 00 00 00         1011 1100 (Eleventh DPI option, for the fifth mode.)
+                07 09 41 6d 3f 00 00 00         0110 1101 (Sixth DPI option, for the sixth mode.)
+                         /\
+                         ||
+        The first 4 bits (the right ones) determine the index of the mode we set.
+        The second 4 bits (the left ones) determine the index of the available DPI option (12 possible):
+            * 200 DPI
+            * 400 DPI
+            * 600 DPI
+            * 800 DPI
+            * 1000 DPI
+            * 1200 DPI
+            * 1600 DPI
+            * 2000 DPI
+            * 2400 DPI
+            * 3200 DPI
+            * 4000 DPI
+        * 4800 DPI
+
+    - Byte 5 describes the "enabled" modes. This is supplied in every call, regardless of whether or not the mode being modified is the default. (0,0,m6,m5 m4,m3,m2,m1)
+        All Modes Enabled:        07 09 40 29 3f 00 00 00          0011 1111
+        Mode 1 Enabled:           07 09 40 29 3f 00 00 00          0000 0001
+        Mode 2 Enabled:           07 09 40 29 3f 00 00 00          0000 0010
+        Modes 3 and 4 Enabled:    07 09 40 29 3f 00 00 00          0000 1100
+        Modes 1, 5 and 6 Enabled: 07 09 40 29 3f 00 00 00          0011 0001
+                                              /\
+                                              ||
