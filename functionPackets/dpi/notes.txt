@@ -39,18 +39,18 @@ Packets 10, 12, 14, ..., 20 are affected, describing settings for each mode.
                          ||
         The first 4 bits (the right ones) determine the index of the mode we set.
         The second 4 bits (the left ones) determine the index of the available DPI option (12 possible):
-            * 200 DPI
-            * 400 DPI
-            * 600 DPI
-            * 800 DPI
-            * 1000 DPI
-            * 1200 DPI
-            * 1600 DPI
-            * 2000 DPI
-            * 2400 DPI
-            * 3200 DPI
-            * 4000 DPI
-        * 4800 DPI
+            0x01   200 DPI
+            0x02   400 DPI
+            0x03   600 DPI
+            0x04   800 DPI
+            0x05   1000 DPI
+            0x06   1200 DPI
+            0x07   1600 DPI
+            0x09   2000 DPI
+            0x0b   2400 DPI
+            0x0d   3200 DPI
+            0x0e   4000 DPI
+            0x0f   4800 DPI
 
     - Byte 5 describes the "enabled" modes. This is supplied in every call, regardless of whether or not the mode being modified is the default. (0,0,m6,m5 m4,m3,m2,m1)
         All Modes Enabled:        07 09 40 29 3f 00 00 00          0011 1111

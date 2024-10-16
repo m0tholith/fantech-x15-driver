@@ -1,12 +1,12 @@
 Packets 1-7 are affected (one command for each button).
-    - Byte 3 is the index of the key being changed, from 1-7 (except 7 which is 8??)
+    - Byte 3 is the index of the key being changed, from 1-7 (except 6 which is 8, and 7 which is 6)
         1          Left Mouse Button
         2          Scroll Wheel Button
         3          Right Mouse Button
         4          Forward Button
         5          Back Button
-        6          + Button
-        8          - Button
+        8          + Button
+        6          - Button
 
     - Byte 4 is the index of the specified key/macro:
         0x01       Left Click
