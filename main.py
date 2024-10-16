@@ -15,7 +15,7 @@ class deviceInfo:
 
 class key(Enum):
     LMB = 0x01
-    MMB = 0x02
+    SCROLLBUTTON = 0x02
     RMB = 0x03
     FORWARD = 0x04
     BACKWARD = 0x05
@@ -51,6 +51,13 @@ class dpiValue(Enum):
     D3200 = 0x0D
     D4000 = 0x0E
     D4800 = 0x0F
+
+
+class ledMode(Enum):
+    OFF = 0x87
+    STATIC = 0x86
+    FIXED = 0x86
+    CYCLIC = 0x96
 
 
 dev = usb.core.find(idVendor=deviceInfo.vendor, idProduct=deviceInfo.product)
@@ -95,10 +102,11 @@ def sendPacket(packet):
     )
 
 
-def sendColorPacket(idx, r, g, b):
-    r = 0xF - r
-    g = 0xF - g
-    b = 0xF - b
+def sendColorPacket(idx, rgb):
+    rgb = 0xFFF - rgb
+    r = (rgb & 0xF00) >> 8
+    g = (rgb & 0x0F0) >> 4
+    b = (rgb & 0x00F) >> 0
     r, g = g, r
     packet = [
         0x07,
@@ -117,7 +125,7 @@ def sendKeybindPacket(k: key, b: keybind):
     sendPacket([0x07, 0x10, k.value, b.value, 0, 0, 0, 0])
 
 
-defaultMouseMode = 0x05
+defaultMouseMode = 0x02
 enabledMouseModes = 0b00111111
 
 
@@ -125,9 +133,10 @@ def sendMouseModePacket(modeToChange, dpi: dpiValue):
     sendPacket(
         [
             0x07,
-            0x10,
+            0x09,
             (defaultMouseMode + 0x3F) & 0xFF,
             ((dpi.value << 4) | (modeToChange + 7)) & 0xFF,
+            enabledMouseModes & 0xFF,
             0,
             0,
             0,
@@ -135,34 +144,35 @@ def sendMouseModePacket(modeToChange, dpi: dpiValue):
     )
 
 
+def sendLedModePacket(mode: ledMode, time=0):
+    sendPacket([0x07, 0x13, 0x7F, (mode.value - time) & 0xFF, 0, 0, 0, 0])
+
+
 # keybinds
 sendKeybindPacket(key.LMB, keybind.LEFTCLICK)
-sendKeybindPacket(key.MMB, keybind.MIDDLECLICK)
+sendKeybindPacket(key.SCROLLBUTTON, keybind.MIDDLECLICK)
 sendKeybindPacket(key.RMB, keybind.RIGHTCLICK)
 sendKeybindPacket(key.FORWARD, keybind.FORWARD)
 sendKeybindPacket(key.BACKWARD, keybind.BACKWARD)
 sendKeybindPacket(key.PLUS, keybind.DPI_PLUS)
 sendKeybindPacket(key.MINUS, keybind.DPI_MINUS)
 # mouse mode
-sendPacket([0x07, 0x09, 0x44, 0x18, 0x3F, 0, 0, 0])
-sendPacket([0x07, 0x09, 0x44, 0x39, 0x3F, 0, 0, 0])
-sendPacket([0x07, 0x09, 0x44, 0x5A, 0x3F, 0, 0, 0])
-sendPacket([0x07, 0x09, 0x44, 0x7B, 0x3F, 0, 0, 0])
-sendPacket([0x07, 0x09, 0x44, 0xBC, 0x3F, 0, 0, 0])
-sendPacket([0x07, 0x09, 0x44, 0xFD, 0x3F, 0, 0, 0])
-
-
+defaultMouseMode = 0x05
+sendMouseModePacket(0x01, dpiValue.D200)
+sendMouseModePacket(0x02, dpiValue.D600)
+sendMouseModePacket(0x03, dpiValue.D1000)
+sendMouseModePacket(0x04, dpiValue.D1600)
+sendMouseModePacket(0x05, dpiValue.D2400)
+sendMouseModePacket(0x06, dpiValue.D4800)
 # colors
-
-
-sendColorPacket(0x0, 0x1, 0x1, 0x1)
-sendColorPacket(0x1, 0x4, 0x4, 0x5)
-sendColorPacket(0x2, 0xC, 0xD, 0xF)
-sendColorPacket(0x3, 0x4, 0x7, 0xF)
-sendColorPacket(0x4, 0x6, 0xE, 0x6)
-sendColorPacket(0x5, 0xF, 0x4, 0x6)
-# static led
-sendPacket([0x07, 0x13, 0x7F, 0x86, 0, 0, 0, 0])
+sendColorPacket(0x0, 0x111)
+sendColorPacket(0x1, 0x445)
+sendColorPacket(0x2, 0xCDF)
+sendColorPacket(0x3, 0x47F)
+sendColorPacket(0x4, 0x6E6)
+sendColorPacket(0x5, 0xF46)
+# led mode
+sendLedModePacket(ledMode.FIXED, 2)
 
 usb.util.release_interface(dev, intf.bInterfaceNumber)
 dev.attach_kernel_driver(intf.bInterfaceNumber)

@@ -16,7 +16,7 @@ Fixed:
                        ||
 Cyclic:
     07 13 7f 96 00 00 00 00
-    - 4th byte is 0x86 minus the time specified, e.x.:
+    - 4th byte is 0x96 minus the time specified, e.x.:
         - 1s: 07 13 7f 95 00 00 00 00
         - 2s: 07 13 7f 94 00 00 00 00
         - 3s: 07 13 7f 93 00 00 00 00
