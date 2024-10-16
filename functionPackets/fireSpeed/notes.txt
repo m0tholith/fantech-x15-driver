@@ -1,0 +1,2 @@
+Packet 22 (last packet) is affected.
+    - 4th byte: Fire speed. (Let x = speed in milliseconds, y = floor(x / 150 * 19))

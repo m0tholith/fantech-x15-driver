@@ -1,0 +1,29 @@
+Instruction for changing LED mode (and enabled LEDs in Cyclic mode):
+    07 13 ** ^^ 00 00 00 00
+    - 3rd byte: Enabled colors in Cyclic LED mode (by index)
+    - 4th byte: Enabled LED mode
+    (see ./cyclicLedSwitch/notes.txt)
+
+Instruction for changing default mouse mode, DPI for each mode, and enabled modes:
+    07 09 ** ^^ '' 00 00 00
+    - 3rd byte: Default mode
+    - 4th byte: DPI of specified mode
+    - 5th byte: Enabled modes by index
+    (see ./dpi/notes.txt)
+
+Instruction for changing color of specified mode (in Fixed and Static LED modes):
+    07 14 *^ ^^ 00 00 00 00
+    - 3rd byte (last 4 bits): Index of specified mode (starting from the 2 bit: 0010, 0100, ...)
+    - Rest of 3rd byte + 4th byte: Color of specified mode
+    (see ./ledType/notes.txt)
+
+Instruction for changing key/macro of specified button:
+    07 10 0* 0^ 00 00 00 00
+    - 3rd byte: Index of the specified button from 1-7 (except 7 is 8??)
+    - 4th byte: Index of the specified key/macro
+    (see ./keymaps/notes.txt)
+
+Instruction for changing fire speed (for macro Fire 0x09):
+    07 12 00 ** 00 00 00 00
+    - 4th byte: Floored value of fire speed in milliseconds, / 150, * 19
+    (see ./fireSpeed/notes.txt)

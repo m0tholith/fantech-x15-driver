@@ -1,0 +1,19 @@
+Packets 11, 13, ..., 21 are affected, describing the colors of each mode.
+    - Bytes 3 and 4 specify a mode, then specify its color:
+        Mode 1, Color 0xfff: 07 14 0f ff 00 00 00 00           0000  1111 1111 1111
+                                   *^ ^^
+
+        Mode 2, Color 0xc3b: 07 14 2c 3b 00 00 00 00           0010  1100 0011 1011
+                                   *^ ^^
+
+        Mode 3, Color 0x992: 07 14 49 92 00 00 00 00           0100  1001 1001 0010
+                                   *^ ^^
+
+        Mode 4, Color 0xd14: 07 14 6d 14 00 00 00 00           0110  1110 0001 0100
+                                   *^ ^^
+
+        Mode 5, Color 0x2e8: 07 14 82 e8 00 00 00 00           1000  0010 1110 1000
+                                   *^ ^^
+
+        Mode 6, Color 0xfa1: 07 14 af a1 00 00 00 00           1010  1111 1010 0001
+                                   *^ ^^
