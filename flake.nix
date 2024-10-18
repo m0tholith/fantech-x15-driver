@@ -17,17 +17,7 @@
       in
       {
         packages = rec {
-          fantech-x15-driver = pkgs.python3Packages.buildPythonApplication {
-            pname = "fantech-x15-driver";
-            version = "0.1.0";
-
-            propagatedBuildInputs = with pkgs.python3Packages; [
-              pyusb
-              toml
-            ];
-
-            src = ./.;
-          };
+          fantech-x15-driver = pkgs.callPackage ./default.nix { };
           default = fantech-x15-driver;
         };
         devShells.default = pkgs.mkShell {
