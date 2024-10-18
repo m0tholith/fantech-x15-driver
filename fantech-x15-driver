@@ -2,10 +2,15 @@
 
 
 from enum import Enum
+from pathlib import Path
 
 import toml
 import usb.core
 import usb.util
+
+home = Path.home()
+
+CONFIG_PATH = home / ".config/fantech/x15.toml"
 
 
 class key(Enum):
@@ -151,7 +156,7 @@ class mouse:
         )
 
 
-parsedConfig = toml.load("./config.toml")
+parsedConfig = toml.load(CONFIG_PATH)
 
 with mouse() as m:
     # keybinds

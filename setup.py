@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 setup(
     name="fantech-x15-driver",
@@ -6,5 +6,5 @@ setup(
     # Modules to import from other scripts:
     packages=find_packages(),
     # Executables
-    scripts=["fantech-x15-driver.py"],
+    scripts=["fantech-x15-driver"],
 )
