@@ -133,7 +133,7 @@ class mouse:
             [
                 0x07,
                 0x09,
-                (defaultMouseMode + 0x3F) & 0xFF,
+                (m.defaultMouseMode + 0x3F) & 0xFF,
                 ((dpi << 4) | (modeToChange + 7)) & 0xFF,
                 self.enabledMouseModes & 0xFF,
                 0,
@@ -169,7 +169,10 @@ with mouse() as m:
     m.sendKeybindPacket(key.PLUS, keybinds[parsedConfig["keymaps"]["plus"]])
     m.sendKeybindPacket(key.MINUS, keybinds[parsedConfig["keymaps"]["minus"]])
     # mouse mode
-    defaultMouseMode = parsedConfig["misc"]["defaultmode"]
+    m.defaultMouseMode = parsedConfig["misc"]["defaultmode"]
+    m.enabledMouseModes = 0
+    for i in range(len(parsedConfig["modes"])):
+        m.enabledMouseModes |= parsedConfig["modes"][i]["enabled"] << (i + 1)
     for i in range(len(parsedConfig["modes"])):
         m.sendMouseModePacket(
             i - 1, dpiValues[parsedConfig["modes"][i]["dpi"]]
