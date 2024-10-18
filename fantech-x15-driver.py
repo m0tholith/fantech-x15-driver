@@ -1,4 +1,6 @@
-from dataclasses import dataclass
+#!/usr/bin/env python
+
+
 from enum import Enum
 
 import toml
