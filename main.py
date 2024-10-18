@@ -30,7 +30,7 @@ keybinds = {
     "rightclick": 0x03,
     "forward": 0x04,
     "backward": 0x05,
-    "dpi_loop": 0x06,
+    "dpiloop": 0x06,
     "show_desktop": 0x07,
     "double_leftclick": 0x08,
     "fire": 0x09,
@@ -149,6 +149,10 @@ def sendLedModePacket(mode, time=0):
     sendPacket([0x07, 0x13, 0x7F, (mode - time) & 0xFF, 0, 0, 0, 0])
 
 
+def sendFireSpeedPacket(rate):
+    sendPacket([0x07, 0x12, 0x00, (rate * 37 // 300) & 0xFF, 0, 0, 0, 0])
+
+
 parsedConfig = toml.load("./config.toml")
 
 # keybinds
@@ -167,7 +171,10 @@ for i in range(len(parsedConfig["modes"])):
     sendMouseModePacket(i - 1, dpiValues[parsedConfig["modes"][i]["dpi"]])
     sendColorPacket(i, parsedConfig["modes"][i]["color"])
 # led mode
-sendLedModePacket(ledModes[parsedConfig["led"]["type"]], parsedConfig["led"]["time"])
+sendLedModePacket(
+    ledModes[parsedConfig["led"]["type"]], parsedConfig["led"]["time"]
+)
+sendFireSpeedPacket(parsedConfig["misc"]["fireSpeed"])
 
 usb.util.release_interface(dev, intf.bInterfaceNumber)
 dev.attach_kernel_driver(intf.bInterfaceNumber)

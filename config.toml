@@ -7,8 +7,8 @@ scrollbutton = "middleclick"
 rmb = "rightclick"
 forward = "forward"
 backward = "backward"
-plus = "dpiplus"
-minus = "dpiminus"
+plus = "fire"
+minus = "dpiloop"
 
 [led]
 type = "fixed" # Available modes: off, static, fixed, cyclic
@@ -41,4 +41,4 @@ color = 0xF46
 
 [misc]
 defaultmode = 0x05
-fireSpeed = 50
+fireSpeed = 25
