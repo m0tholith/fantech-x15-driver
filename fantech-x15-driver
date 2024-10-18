@@ -162,7 +162,7 @@ with mouse() as m:
     # keybinds
     m.sendKeybindPacket(key.LMB, keybinds[parsedConfig["keymaps"]["lmb"]])
     m.sendKeybindPacket(
-        key.SCROLLBUTTON, keybinds[parsedConfig["keymaps"]["scrollbutton"]]
+        key.SCROLLBUTTON, keybinds[parsedConfig["keymaps"]["scrollButton"]]
     )
     m.sendKeybindPacket(key.RMB, keybinds[parsedConfig["keymaps"]["rmb"]])
     m.sendKeybindPacket(
@@ -174,17 +174,22 @@ with mouse() as m:
     m.sendKeybindPacket(key.PLUS, keybinds[parsedConfig["keymaps"]["plus"]])
     m.sendKeybindPacket(key.MINUS, keybinds[parsedConfig["keymaps"]["minus"]])
     # mouse mode
-    m.defaultMouseMode = parsedConfig["misc"]["defaultmode"]
+    m.defaultMouseMode = parsedConfig["defaultMode"]
     m.enabledMouseModes = 0
     for i in range(len(parsedConfig["modes"])):
         m.enabledMouseModes |= parsedConfig["modes"][i]["enabled"] << (i + 1)
     for i in range(len(parsedConfig["modes"])):
+        if not parsedConfig["modes"][i]["enabled"]:
+            continue
         m.sendMouseModePacket(
             i - 1, dpiValues[parsedConfig["modes"][i]["dpi"]]
         )
-        m.sendColorPacket(i, parsedConfig["modes"][i]["color"])
+        color = parsedConfig["modes"][i]["color"]
+        if type(color) == str:
+            color = int(color, 16)
+        m.sendColorPacket(i, color)
     # led mode
     m.sendLedModePacket(
         ledModes[parsedConfig["led"]["type"]], parsedConfig["led"]["time"]
     )
-    m.sendFireSpeedPacket(parsedConfig["misc"]["fireSpeed"])
+    m.sendFireSpeedPacket(parsedConfig["fireSpeed"])
