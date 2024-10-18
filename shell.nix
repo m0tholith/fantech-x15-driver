@@ -7,5 +7,6 @@ pkgs.mkShell {
     usbutils
     python3Packages.pyusb
     libusb1
+    python3Packages.toml
   ];
 }

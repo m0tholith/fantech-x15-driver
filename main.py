@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum
 
+import toml
 import usb.core
 import usb.util
 
@@ -23,45 +24,45 @@ class key(Enum):
     MINUS = 0x06
 
 
-class keybind(Enum):
-    LEFTCLICK = 0x01
-    MIDDLECLICK = 0x02
-    RIGHTCLICK = 0x03
-    FORWARD = 0x04
-    BACKWARD = 0x05
-    DPI_LOOP = 0x06
-    SHOW_DESKTOP = 0x07
-    DOUBLE_LEFTCLICK = 0x08
-    FIRE = 0x09
-    OFF = 0x0A
-    DPI_PLUS = 0x0B
-    DPI_MINUS = 0x0C
+keybinds = {
+    "leftclick": 0x01,
+    "middleclick": 0x02,
+    "rightclick": 0x03,
+    "forward": 0x04,
+    "backward": 0x05,
+    "dpi_loop": 0x06,
+    "show_desktop": 0x07,
+    "double_leftclick": 0x08,
+    "fire": 0x09,
+    "off": 0x0A,
+    "dpiplus": 0x0B,
+    "dpiminus": 0x0C,
+}
+
+dpiValues = {
+    200: 0x01,
+    400: 0x02,
+    600: 0x03,
+    800: 0x04,
+    1000: 0x05,
+    1200: 0x06,
+    1600: 0x07,
+    2000: 0x09,
+    2400: 0x0B,
+    3200: 0x0D,
+    4000: 0x0E,
+    4800: 0x0F,
+}
 
 
-class dpiValue(Enum):
-    D200 = 0x01
-    D400 = 0x02
-    D600 = 0x03
-    D800 = 0x04
-    D1000 = 0x05
-    D1200 = 0x06
-    D1600 = 0x07
-    D2000 = 0x09
-    D2400 = 0x0B
-    D3200 = 0x0D
-    D4000 = 0x0E
-    D4800 = 0x0F
-
-
-class ledMode(Enum):
-    OFF = 0x87
-    STATIC = 0x86
-    FIXED = 0x86
-    CYCLIC = 0x96
-
+ledModes = {
+    "off": 0x87,
+    "static": 0x86,
+    "fixed": 0x86,
+    "cyclic": 0x96,
+}
 
 dev = usb.core.find(idVendor=deviceInfo.vendor, idProduct=deviceInfo.product)
-print(dev)
 
 # was it found?
 if dev is None:
@@ -121,21 +122,21 @@ def sendColorPacket(idx, rgb):
     sendPacket(packet)
 
 
-def sendKeybindPacket(k: key, b: keybind):
-    sendPacket([0x07, 0x10, k.value, b.value, 0, 0, 0, 0])
+def sendKeybindPacket(k: key, b):
+    sendPacket([0x07, 0x10, k.value, b, 0, 0, 0, 0])
 
 
 defaultMouseMode = 0x02
 enabledMouseModes = 0b00111111
 
 
-def sendMouseModePacket(modeToChange, dpi: dpiValue):
+def sendMouseModePacket(modeToChange, dpi):
     sendPacket(
         [
             0x07,
             0x09,
             (defaultMouseMode + 0x3F) & 0xFF,
-            ((dpi.value << 4) | (modeToChange + 7)) & 0xFF,
+            ((dpi << 4) | (modeToChange + 7)) & 0xFF,
             enabledMouseModes & 0xFF,
             0,
             0,
@@ -144,35 +145,29 @@ def sendMouseModePacket(modeToChange, dpi: dpiValue):
     )
 
 
-def sendLedModePacket(mode: ledMode, time=0):
-    sendPacket([0x07, 0x13, 0x7F, (mode.value - time) & 0xFF, 0, 0, 0, 0])
+def sendLedModePacket(mode, time=0):
+    sendPacket([0x07, 0x13, 0x7F, (mode - time) & 0xFF, 0, 0, 0, 0])
 
+
+parsedConfig = toml.load("./config.toml")
 
 # keybinds
-sendKeybindPacket(key.LMB, keybind.LEFTCLICK)
-sendKeybindPacket(key.SCROLLBUTTON, keybind.MIDDLECLICK)
-sendKeybindPacket(key.RMB, keybind.RIGHTCLICK)
-sendKeybindPacket(key.FORWARD, keybind.FORWARD)
-sendKeybindPacket(key.BACKWARD, keybind.BACKWARD)
-sendKeybindPacket(key.PLUS, keybind.DPI_PLUS)
-sendKeybindPacket(key.MINUS, keybind.DPI_MINUS)
+sendKeybindPacket(key.LMB, keybinds[parsedConfig["keymaps"]["lmb"]])
+sendKeybindPacket(
+    key.SCROLLBUTTON, keybinds[parsedConfig["keymaps"]["scrollbutton"]]
+)
+sendKeybindPacket(key.RMB, keybinds[parsedConfig["keymaps"]["rmb"]])
+sendKeybindPacket(key.FORWARD, keybinds[parsedConfig["keymaps"]["forward"]])
+sendKeybindPacket(key.BACKWARD, keybinds[parsedConfig["keymaps"]["backward"]])
+sendKeybindPacket(key.PLUS, keybinds[parsedConfig["keymaps"]["plus"]])
+sendKeybindPacket(key.MINUS, keybinds[parsedConfig["keymaps"]["minus"]])
 # mouse mode
-defaultMouseMode = 0x05
-sendMouseModePacket(0x01, dpiValue.D200)
-sendMouseModePacket(0x02, dpiValue.D600)
-sendMouseModePacket(0x03, dpiValue.D1000)
-sendMouseModePacket(0x04, dpiValue.D1600)
-sendMouseModePacket(0x05, dpiValue.D2400)
-sendMouseModePacket(0x06, dpiValue.D4800)
-# colors
-sendColorPacket(0x0, 0x111)
-sendColorPacket(0x1, 0x445)
-sendColorPacket(0x2, 0xCDF)
-sendColorPacket(0x3, 0x47F)
-sendColorPacket(0x4, 0x6E6)
-sendColorPacket(0x5, 0xF46)
+defaultMouseMode = parsedConfig["misc"]["defaultmode"]
+for i in range(len(parsedConfig["modes"])):
+    sendMouseModePacket(i - 1, dpiValues[parsedConfig["modes"][i]["dpi"]])
+    sendColorPacket(i, parsedConfig["modes"][i]["color"])
 # led mode
-sendLedModePacket(ledMode.FIXED, 2)
+sendLedModePacket(ledModes[parsedConfig["led"]["type"]], parsedConfig["led"]["time"])
 
 usb.util.release_interface(dev, intf.bInterfaceNumber)
 dev.attach_kernel_driver(intf.bInterfaceNumber)
