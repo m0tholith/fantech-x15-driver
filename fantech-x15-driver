@@ -4,6 +4,7 @@
 from enum import Enum
 from pathlib import Path
 
+import sys
 import toml
 import usb.core
 import usb.util
@@ -57,7 +58,6 @@ dpiValues = {
 ledModes = {
     "off": 0x87,
     "static": 0x86,
-    "fixed": 0x86,
     "cyclic": 0x96,
 }
 
