@@ -16,4 +16,9 @@ python3Packages.buildPythonApplication {
     license = lib.licenses.gpl3Only;
     mainProgram = "fantech-x15-driver";
   };
+  
+  build-system = with python3Packages; [
+    setuptools
+  ];
+  pyproject = true;
 }
